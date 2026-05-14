@@ -1,5 +1,6 @@
 import argparse
 import sys
+import time
 
 from ollama_http import DEFAULT_BASE_URL, OllamaError, chat, pick_gemma_model
 from soc_sci_tasks import TASKS, get_task_keys
@@ -44,6 +45,7 @@ def main():
         print(spec.user_input)
         print("-" * 80)
         print("【Model Output】\n")
+        start_time = time.time()
         max_tokens = args.max_tokens if args.max_tokens is not None else (spec.max_tokens or 900)
         out = chat(
             model=model,
@@ -67,7 +69,13 @@ def main():
             )
             if not out:
                 print(f"（空输出：可尝试增大 --max-tokens，例如 {retry_tokens} 或更高）")
+        
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        
         print(out)
+        print("\n" + "-" * 80)
+        print(f"【运行时长】: {elapsed_time:.2f} 秒")
     return 0
 
 
